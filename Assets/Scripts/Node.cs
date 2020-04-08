@@ -13,13 +13,4 @@ public class Node
 		gridPos = _gridPos;
 		worldPos = _worldPos;
 	}
-
-	// A* functionality.
-	// public int G;
-	// public int H;
-	// public int F {
-	// 	get {
-	// 		return G + H;
-	// 	}
-	// }
 }

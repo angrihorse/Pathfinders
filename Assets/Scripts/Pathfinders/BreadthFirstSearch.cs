@@ -4,10 +4,7 @@ using UnityEngine;
 
 public static class BreadthFirstSearch
 {
-	public static List<Node> FindPath(SquareGrid graph) {
-		Node startNode = graph.NodeFromWorldPoint(graph.start.position);
-		Node targetNode = graph.NodeFromWorldPoint(graph.target.position);
-
+	public static void FindPath(SquareGrid graph, Node startNode, Node targetNode) {
 		Dictionary<Node, Node> nodeParent = new Dictionary<Node, Node>();
 		Queue<Node> frontier = new Queue<Node>();
 		HashSet<Node> visited = new HashSet<Node>();
@@ -17,7 +14,8 @@ public static class BreadthFirstSearch
 			Node currentNode = frontier.Dequeue();
 
 			if (currentNode == targetNode) {
-				return Utils.RetracePath(startNode, targetNode, nodeParent);
+				graph.RetracePath(startNode, targetNode, nodeParent);
+				return;
 			}
 
 			foreach (Node neighbor in graph.GetNeighbors(currentNode)) {
@@ -29,6 +27,6 @@ public static class BreadthFirstSearch
 			}
 		}
 
-		return null;
+		graph.path = null;
 	}
 }

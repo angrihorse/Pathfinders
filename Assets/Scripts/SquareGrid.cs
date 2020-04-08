@@ -18,15 +18,15 @@ public class SquareGrid : MonoBehaviour
     void Start()
     {
 		gridSize = Vector2Int.RoundToInt(gridWorldSize / squareSize);
+		InitializeGrid();
     }
 
 	void Update() {
-		InitializeGrid(); // Update unwalkable nodes real-time
-		path = AStar.FindPath(this); // and path.
+		AStar.FindPath(this, NodeFromWorldPoint(start.position), NodeFromWorldPoint(target.position));
 	}
 
 	void OnDrawGizmos() {
-		// Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
+		Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
 		Gizmos.color = Color.cyan;
 
 		// Draw path with lines.
@@ -44,14 +44,6 @@ public class SquareGrid : MonoBehaviour
 					Gizmos.color = Color.black;
 					Gizmos.DrawCube(node.worldPos, Vector3.one * squareSize * 0.95f);
 				}
-
-				// Draw path by filling nodes.
-				// if (path != null) {
-				// 	if (path.Contains(node)) {
-				// 		Gizmos.color = Color.cyan;
-				// 		Gizmos.DrawCube(node.worldPos, Vector3.one * squareSize * 0.95f);
-				// 	}
-				// }
 			}
 		}
 	}
@@ -106,5 +98,17 @@ public class SquareGrid : MonoBehaviour
 		int x = Mathf.RoundToInt((gridSize.x - 1) * ratioX);
 		int y = Mathf.RoundToInt((gridSize.y - 1) * ratioY);
 		return grid[x, y];
+	}
+
+	public void RetracePath(Node startNode, Node targetNode, Dictionary<Node, Node> nodeToParent) {
+		List<Node> newPath = new List<Node>();
+		Node currentNode = targetNode;
+		while (currentNode != startNode) {
+			newPath.Add(currentNode);
+			currentNode = nodeToParent[currentNode];
+		}
+		newPath.Add(startNode); // For simpler visualizing.
+		newPath.Reverse(); // Optional.
+		path = newPath;
 	}
 }

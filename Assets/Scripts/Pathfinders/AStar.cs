@@ -4,12 +4,9 @@ using UnityEngine;
 
 public static class AStar
 {
-	public static List<Node> FindPath(SquareGrid graph) {
-		Node startNode = graph.NodeFromWorldPoint(graph.start.position);
-		Node targetNode = graph.NodeFromWorldPoint(graph.target.position);
-
+	public static void FindPath(SquareGrid graph, Node startNode, Node targetNode) {
 		Dictionary<Node, Node> nodeParent = new Dictionary<Node, Node>();
-		PriorityQueue<Node> frontier = new PriorityQueue<Node>();
+		Heap<Node> frontier = new Heap<Node>(graph.gridSize.x * graph.gridSize.y);
 		Dictionary<Node, int> costFromStartTo = new Dictionary<Node, int>();
 		for (int x = 0; x < graph.gridSize.x; x++) {
 			for (int y = 0; y < graph.gridSize.y; y++) {
@@ -18,12 +15,13 @@ public static class AStar
 		}
 		costFromStartTo[startNode] = 0;
 
-		frontier.Enqueue(startNode, costFromStartTo[startNode]);
-		while (frontier.Count > 0) {
-			Node currentNode = frontier.Dequeue();
+		frontier.Insert(startNode, costFromStartTo[startNode]);
+		while (frontier.itemCount > 0) {
+			Node currentNode = frontier.Extract();
 
 			if (currentNode == targetNode) {
-				return Utils.RetracePath(startNode, targetNode, nodeParent);
+				graph.RetracePath(startNode, targetNode, nodeParent);
+				return;
 			}
 
 			foreach (Node neighbor in graph.GetNeighbors(currentNode)) {
@@ -31,13 +29,13 @@ public static class AStar
 				if (newCost < costFromStartTo[neighbor]) {
 					costFromStartTo[neighbor] = newCost;
 					nodeParent[neighbor] = currentNode;
-					int heuristics = ManhattanDistance(neighbor, targetNode);
-					frontier.Enqueue(neighbor, costFromStartTo[neighbor] + heuristics);
-					// Remove costFromStartTo[neighbor] and you will get Greedy Best First Search.
+					int heuristics = EuclideanDistance(neighbor, targetNode);
+					frontier.Insert(neighbor, costFromStartTo[neighbor] + heuristics);
 				}
 			}
 		}
-		return null;
+
+		graph.path = null;
 	}
 
 	static int ManhattanDistance(Node nodeA, Node nodeB) {
