@@ -27,11 +27,10 @@ public class SquareGrid : MonoBehaviour
 
 	void OnDrawGizmos() {
 		Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
-		Gizmos.color = Color.cyan;
 
 		// Draw path with lines.
 		if (path != null) {
-			Gizmos.color = Color.red;
+			Gizmos.color = new Color(.96f, .26f, .21f, 1f);
 			for (int i = 0; i < path.Count - 1; i++) {
 				Gizmos.DrawLine(path[i].worldPos, path[i+1].worldPos);
 			}
@@ -41,7 +40,7 @@ public class SquareGrid : MonoBehaviour
 		if (grid != null) {
 			foreach (Node node in grid) {
 				if (!node.walkable) {
-					Gizmos.color = Color.black;
+					Gizmos.color = new Color(1f, .92f, .23f, 1f);
 					Gizmos.DrawCube(node.worldPos, Vector3.one * squareSize * 0.95f);
 				}
 			}
